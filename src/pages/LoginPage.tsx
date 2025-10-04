@@ -30,27 +30,25 @@ export default function LoginPage() {
       await signIn(formData.email, formData.password);
       window.location.href = '/';
     } catch (err) {
-      if (err instanceof Error) {
-        if (err.message.includes('Email not confirmed')) {
-          setError('Email not confirmed. Please check your inbox (and spam) for a verification link. If needed, try signing up again.');
-        } else {
-          setError(err.message);
-        }
-      } else {
-        setError('An error occurred');
-      }
+      const errorMessage = err instanceof Error ? err.message : 'Login failed';
+      console.error('Login error:', err);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError('');
     try {
-      setError('');
       await signInWithGoogle();
-      window.location.href = '/';
+      // OAuth will redirect, so no need to manually redirect
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Google sign-in failed');
+      const errorMessage = err instanceof Error ? err.message : 'Google sign-in failed';
+      console.error('Google sign-in error:', err);
+      setError(errorMessage);
+      setLoading(false);
     }
   };
 
